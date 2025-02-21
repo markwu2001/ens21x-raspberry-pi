@@ -3,9 +3,9 @@
 
 #include <stdint.h>
 
-#include <Arduino.h>
-#include <Stream.h>
-#include <Wire.h>
+#include <iostream>
+#include <errno.h>
+#include <wiringPiI2C.h>
 
 namespace ScioSense
 {
@@ -65,8 +65,8 @@ namespace ScioSense
         virtual ~ENS21x();
 
     public:
-        virtual bool begin(TwoWire& twoWire = Wire, uint8_t address= 0x43); // Connnects to ENS21x using the given TwoWire object and reads PART_ID, DIE_REV and UID; returns the result of isConnected()
-        virtual bool isConnected() = 0;                                     // checks if the read PART_ID matches the expected value; returns true, if so.
+        virtual bool begin(uint8_t address = 0x43); // Connnects to ENS21x using the given file descriptor and reads PART_ID, DIE_REV and UID; returns the result of isConnected()
+        virtual bool isConnected();                                     // checks if the read PART_ID matches the expected value; returns true, if so.
 
     public:
         Result update(uint64_t ms = SystemTiming::CONVERSION_CONTINUOUS);
@@ -117,6 +117,7 @@ namespace ScioSense
         template<class T> void debug(const char* msg, T data);
 
     protected:
+        int fd;
         uint8_t slaveAddress;
         int16_t solderCorrection;
 
@@ -134,7 +135,7 @@ namespace ScioSense
         Result checkData(uint32_t data);
 
     private:
-        TwoWire* wire;
+        // TwoWire* wire;
         Stream* debugStream;
     };
 }

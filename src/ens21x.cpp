@@ -1,5 +1,7 @@
-#include <Arduino.h>
-#include <Wire.h>
+#include <iostream>
+#include <unistd.h> // for usleep
+#include <errno.h>
+#include <wiringPiI2C.h>
 
 #include "ens21x.h"
 #include "utils.h"
@@ -8,11 +10,16 @@ using namespace ScioSense::Utils;
 
 namespace ScioSense
 {
-    ENS21x::~ENS21x() { }
+    ENS21x::~ENS21x() {
+        if (fd != -1) {
+            close(fd);
+        }
+    }
 
     ENS21x::ENS21x()
     {
-        wire                = nullptr;
+        // wire                = nullptr;
+        fd                  = -1;    
         debugStream         = nullptr;
         solderCorrection    = 0;
         slaveAddress        = 0x43;
@@ -24,12 +31,16 @@ namespace ScioSense
         hData               = 0;
     }
 
-    bool ENS21x::begin(TwoWire& twoWire, uint8_t address)
-    {
-        wire        = &twoWire;
+    bool ENS21x::begin(uint8_t address)
+    {        
         slaveAddress= address;
-        readIdentifiers();
+        fd = wiringPiI2CSetup(slaveAddress);
+        if (fd == -1) {
+            std::cerr << "Error: Failed to initialize I2C communication." << std::endl;
+            return false;
+        }
 
+        readIdentifiers();
         return isConnected();
     }
 
@@ -45,7 +56,7 @@ namespace ScioSense
 
     ENS21x::Result ENS21x::update(uint64_t ms)
     {
-        delay(ms);
+        usleep(ms * 1000); // usleep takes microseconds
 
         uint8_t buffer[6];
         Result result = read(RegisterAddress::T_VAL, buffer, 6);
@@ -222,16 +233,28 @@ namespace ScioSense
     {
         Result result = Result::STATUS_I2C_ERROR;
 
-        wire->beginTransmission(slaveAddress);
-        wire->write((uint8_t)address);
-        if (wire->endTransmission() == 0) // 0 == success
-        {
-            wire->requestFrom(slaveAddress, size);
-            if (wire->readBytes(data, size) == size)
-            {
-                result = Result::STATUS_OK;
-            }
+        // wire->beginTransmission(slaveAddress);
+        // wire->write((uint8_t)address);
+        // if (wire->endTransmission() == 0) // 0 == success
+        // {
+        //     wire->requestFrom(slaveAddress, size);
+        //     if (wire->readBytes(data, size) == size)
+        //     {
+        //         result = Result::STATUS_OK;
+        //     }
+        // }
+
+        if (fd == -1) return Result::STATUS_I2C_ERROR;
+
+        int result = wiringPiI2CReadReg8(fd, (uint8_t)address);
+        if (result < 0) return Result::STATUS_I2C_ERROR;
+
+        for (size_t i = 0; i < size; ++i) {
+            data[i] = wiringPiI2CReadReg8(fd, (uint8_t)address + i); // Read sequentially
+            if (data[i] < 0) return Result::STATUS_I2C_ERROR;
         }
+        debug(__func__, data, size, Result::STATUS_OK);
+        return Result::STATUS_OK;
 
         debug(__func__, data, size, result);
         return result;
@@ -241,13 +264,15 @@ namespace ScioSense
     {
         Result result = Result::STATUS_I2C_ERROR;
 
-        wire->beginTransmission(slaveAddress);
-        wire->write((uint8_t)address);
-        wire->write(data, size);
-        if (wire->endTransmission() == 0) // 0 == success
-        {
-            result = Result::STATUS_OK;
+        if (fd == -1) return Result::STATUS_I2C_ERROR;
+
+        for (size_t i = 0; i < size; ++i) {
+            int result = wiringPiI2CWriteReg8(fd, (uint8_t)address + i, data[i]);
+            if (result != 0) return Result::STATUS_I2C_ERROR;
         }
+
+        debug(__func__, data, size, Result::STATUS_OK);
+        return Result::STATUS_OK;
 
         debug(__func__, data, size, result);
         return result;
@@ -270,7 +295,7 @@ namespace ScioSense
         debug(__func__);
 
         setLowPower(false);
-        delay(SystemTiming::BOOTING);
+        usleep(SystemTiming::BOOTING * 1000);
 
         read(RegisterAddress::PART_ID, partId);
         debug("PART_ID: ", partId);
