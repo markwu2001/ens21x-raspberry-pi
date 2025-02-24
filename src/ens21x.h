@@ -108,9 +108,9 @@ namespace ScioSense
     protected:
         void readIdentifiers();
 
-    // protected:
-    //     const char* debugPrefix= "ENS21x debug -- ";
-    //     const char* toString(Result& result);
+    protected:
+        // const char* debugPrefix= "ENS21x debug -- ";
+        const char* toString(Result result);
     //     void debug(const char* msg);
     //     void debug(const char* msg, Result& result);
     //     void debug(const char* msg, uint8_t* data, size_t size, Result& result);

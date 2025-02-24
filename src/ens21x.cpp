@@ -1,5 +1,6 @@
 #include <iostream>
 #include <unistd.h> // for usleep
+#include <cmath>
 #include <errno.h>
 #include <wiringPiI2C.h>
 
@@ -206,7 +207,8 @@ namespace ScioSense
 
         static const float MOLAR_MASS_OF_WATER      = 18.01534;
         static const float UNIVERSAL_GAS_CONSTANT   = 8.21447215;
-        return (6.1121 * pow(2.718281828,(17.67* this->getTempCelsius())/(this->getTempCelsius() + 243.5))* this->getHumidityPercent() *MOLAR_MASS_OF_WATER)/((273.15+ this->getTempCelsius() )*UNIVERSAL_GAS_CONSTANT);
+        float temperatureCelsius = this->getTempCelsius(); // Store the result to avoid multiple calls
+        return (6.1121 * std::pow(2.718281828, (17.67 * temperatureCelsius) / (temperatureCelsius + 243.5)) * this->getHumidityPercent() * MOLAR_MASS_OF_WATER) / ((273.15 + temperatureCelsius) * UNIVERSAL_GAS_CONSTANT);
     }
 
     uint16_t ENS21x::getDataT()
@@ -233,31 +235,19 @@ namespace ScioSense
     {
         Result result = Result::STATUS_I2C_ERROR;
 
-        // wire->beginTransmission(slaveAddress);
-        // wire->write((uint8_t)address);
-        // if (wire->endTransmission() == 0) // 0 == success
-        // {
-        //     wire->requestFrom(slaveAddress, size);
-        //     if (wire->readBytes(data, size) == size)
-        //     {
-        //         result = Result::STATUS_OK;
-        //     }
-        // }
-
         if (fd == -1) return Result::STATUS_I2C_ERROR;
 
-        int result = wiringPiI2CReadReg8(fd, (uint8_t)address);
-        if (result < 0) return Result::STATUS_I2C_ERROR;
-
-        for (size_t i = 0; i < size; ++i) {
-            data[i] = wiringPiI2CReadReg8(fd, (uint8_t)address + i); // Read sequentially
-            if (data[i] < 0) return Result::STATUS_I2C_ERROR;
+    int read_result; // Store the result of each individual read
+    for (size_t i = 0; i < size; ++i) {
+        read_result = wiringPiI2CReadReg8(fd, (uint8_t)address + i);
+        if (read_result < 0) {
+            return Result::STATUS_I2C_ERROR; // Return error immediately if any read fails
         }
-        // debug(__func__, data, size, Result::STATUS_OK);
-        return Result::STATUS_OK;
+        data[i] = (uint8_t)read_result; // Cast the int to uint8_t
+    }
 
-        // debug(__func__, data, size, result);
-        return result;
+    // debug(__func__, data, size, Result::STATUS_OK);
+    return Result::STATUS_OK;
     }
 
     ENS21x::Result ENS21x::write(RegisterAddress address, uint8_t* data, size_t size)
@@ -266,16 +256,16 @@ namespace ScioSense
 
         if (fd == -1) return Result::STATUS_I2C_ERROR;
 
+        int write_result;
         for (size_t i = 0; i < size; ++i) {
-            int result = wiringPiI2CWriteReg8(fd, (uint8_t)address + i, data[i]);
-            if (result != 0) return Result::STATUS_I2C_ERROR;
+            write_result = wiringPiI2CWriteReg8(fd, (uint8_t)address + i, data[i]);
+            if (write_result != 0) {
+                return Result::STATUS_I2C_ERROR;
+            }
         }
 
         // debug(__func__, data, size, Result::STATUS_OK);
         return Result::STATUS_OK;
-
-        // debug(__func__, data, size, result);
-        return result;
     }
 
     template<class T>
@@ -354,7 +344,7 @@ namespace ScioSense
     //     }
     // }
 
-    const char* ENS21x::toString(Result& result)
+    const char* ENS21x::toString(Result result)
     {
         switch (result)
         {
