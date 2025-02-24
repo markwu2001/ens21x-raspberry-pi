@@ -95,9 +95,9 @@ namespace ScioSense
         Result getStatusT(); // returns the read status of the last read temperature data
         Result getStatusH(); // returns the read status of the last read humidity data
 
-    public:
-        void enableDebugging(Stream& debugStream);     // Enables the debug log. The output is written to the given debugStream
-        void disableDebugging();                       // Stops the debug log if enabled. Does nothing otherwise.
+    // public:
+    //     void enableDebugging(Stream& debugStream);     // Enables the debug log. The output is written to the given debugStream
+    //     void disableDebugging();                       // Stops the debug log if enabled. Does nothing otherwise.
 
     protected:
         Result read(RegisterAddress address, uint8_t* data, size_t size);
@@ -108,13 +108,13 @@ namespace ScioSense
     protected:
         void readIdentifiers();
 
-    protected:
-        const char* debugPrefix= "ENS21x debug -- ";
-        const char* toString(Result& result);
-        void debug(const char* msg);
-        void debug(const char* msg, Result& result);
-        void debug(const char* msg, uint8_t* data, size_t size, Result& result);
-        template<class T> void debug(const char* msg, T data);
+    // protected:
+    //     const char* debugPrefix= "ENS21x debug -- ";
+    //     const char* toString(Result& result);
+    //     void debug(const char* msg);
+    //     void debug(const char* msg, Result& result);
+    //     void debug(const char* msg, uint8_t* data, size_t size, Result& result);
+    //     template<class T> void debug(const char* msg, T data);
 
     protected:
         int fd;
@@ -134,9 +134,9 @@ namespace ScioSense
         uint32_t crc7(uint32_t val);
         Result checkData(uint32_t data);
 
-    private:
+    // private:
         // TwoWire* wire;
-        Stream* debugStream;
+        // Stream* debugStream;
     };
 }
 

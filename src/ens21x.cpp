@@ -44,15 +44,15 @@ namespace ScioSense
         return isConnected();
     }
 
-    void ENS21x::enableDebugging(Stream& debugStream)
-    {
-        this->debugStream = &debugStream;
-    }
+    // void ENS21x::enableDebugging(Stream& debugStream)
+    // {
+    //     this->debugStream = &debugStream;
+    // }
 
-    void ENS21x::disableDebugging()
-    {
-        debugStream = nullptr;
-    }
+    // void ENS21x::disableDebugging()
+    // {
+    //     debugStream = nullptr;
+    // }
 
     ENS21x::Result ENS21x::update(uint64_t ms)
     {
@@ -69,7 +69,7 @@ namespace ScioSense
             hStatus = checkData(endian::littleTo<uint32_t>(buffer + 3));
         }
 
-        debug(__func__, result);
+        // debug(__func__, result);
         return result;
     }
 
@@ -94,7 +94,7 @@ namespace ScioSense
             }
         }
 
-        debug(__func__, result);
+        // debug(__func__, result);
         return result;
     }
 
@@ -106,7 +106,7 @@ namespace ScioSense
             result = singleShotMeasure(sensor);
         }
 
-        debug(__func__, result);
+        // debug(__func__, result);
         return result;
     }
 
@@ -114,7 +114,7 @@ namespace ScioSense
     {
         Result result = write(RegisterAddress::SENS_STOP, sensor);
 
-        debug(__func__, result);
+        // debug(__func__, result);
         return result;
     }
 
@@ -142,7 +142,7 @@ namespace ScioSense
             delay(SystemTiming::BOOTING);
         }
 
-        debug(__func__, result);
+        // debug(__func__, result);
         return result;
     }
 
@@ -253,10 +253,10 @@ namespace ScioSense
             data[i] = wiringPiI2CReadReg8(fd, (uint8_t)address + i); // Read sequentially
             if (data[i] < 0) return Result::STATUS_I2C_ERROR;
         }
-        debug(__func__, data, size, Result::STATUS_OK);
+        // debug(__func__, data, size, Result::STATUS_OK);
         return Result::STATUS_OK;
 
-        debug(__func__, data, size, result);
+        // debug(__func__, data, size, result);
         return result;
     }
 
@@ -271,10 +271,10 @@ namespace ScioSense
             if (result != 0) return Result::STATUS_I2C_ERROR;
         }
 
-        debug(__func__, data, size, Result::STATUS_OK);
+        // debug(__func__, data, size, Result::STATUS_OK);
         return Result::STATUS_OK;
 
-        debug(__func__, data, size, result);
+        // debug(__func__, data, size, result);
         return result;
     }
 
@@ -292,67 +292,67 @@ namespace ScioSense
 
     void ENS21x::readIdentifiers()
     {
-        debug(__func__);
+        // debug(__func__);
 
         setLowPower(false);
         usleep(SystemTiming::BOOTING * 1000);
 
         read(RegisterAddress::PART_ID, partId);
-        debug("PART_ID: ", partId);
+        // debug("PART_ID: ", partId);
 
         read(RegisterAddress::DIE_REV, dieRev);
-        debug("DIE_REV: ", dieRev);
+        // debug("DIE_REV: ", dieRev);
 
         read(RegisterAddress::UID, uid);
-        debug("UID:     ", uid);
+        // debug("UID:     ", uid);
 
         setLowPower(true);
     }
 
-    void ENS21x::debug(const char* msg)
-    {
-        if (debugStream)
-        {
-            debugStream->print(debugPrefix);
-            debugStream->println(msg);
-        }
-    }
+    // void ENS21x::debug(const char* msg)
+    // {
+    //     if (debugStream)
+    //     {
+    //         debugStream->print(debugPrefix);
+    //         debugStream->println(msg);
+    //     }
+    // }
 
-    void ENS21x::debug(const char* msg, Result& result)
-    {
-        debug(msg, nullptr, 0, result);
-    }
+    // void ENS21x::debug(const char* msg, Result& result)
+    // {
+    //     debug(msg, nullptr, 0, result);
+    // }
 
-    void ENS21x::debug(const char* msg, uint8_t* data, size_t size, Result& result)
-    {
-        if (debugStream)
-        {
-            debugStream->print(debugPrefix);
-            debugStream->print(msg);
+    // void ENS21x::debug(const char* msg, uint8_t* data, size_t size, Result& result)
+    // {
+    //     if (debugStream)
+    //     {
+    //         debugStream->print(debugPrefix);
+    //         debugStream->print(msg);
 
-            for (size_t i = 0; i < size; i++)
-            {
-                debugStream->print(" 0x");
-                debugStream->print(data[i], HEX);
-            }
+    //         for (size_t i = 0; i < size; i++)
+    //         {
+    //             debugStream->print(" 0x");
+    //             debugStream->print(data[i], HEX);
+    //         }
 
-            debugStream->print(" status: ");
-            debugStream->println(toString(result));
-        }
-    }
+    //         debugStream->print(" status: ");
+    //         debugStream->println(toString(result));
+    //     }
+    // }
 
-    template<class T>
-    void ENS21x::debug(const char* msg, T data)
-    {
-        if (debugStream)
-        {
-            debugStream->print(debugPrefix);
-            debugStream->print(msg);
-            debugStream->print(" 0x");
-            debugStream->print((uint32_t)data, HEX);
-            debugStream->println();
-        }
-    }
+    // template<class T>
+    // void ENS21x::debug(const char* msg, T data)
+    // {
+    //     if (debugStream)
+    //     {
+    //         debugStream->print(debugPrefix);
+    //         debugStream->print(msg);
+    //         debugStream->print(" 0x");
+    //         debugStream->print((uint32_t)data, HEX);
+    //         debugStream->println();
+    //     }
+    // }
 
     const char* ENS21x::toString(Result& result)
     {
@@ -422,14 +422,14 @@ namespace ScioSense
             result = valid == 1 ? Result::STATUS_OK : Result::STATUS_INVALID;
         }
 
-        debug(__func__, result);
-        if (result != Result::STATUS_OK)
-        {
-            debug("Data   : ", data);
-            debug("payload: ", payload);
-            debug("CRC    : ", crc);
-            debug("Valid  : ", valid);
-        }
+        // debug(__func__, result);
+        // if (result != Result::STATUS_OK)
+        // {
+        //     debug("Data   : ", data);
+        //     debug("payload: ", payload);
+        //     debug("CRC    : ", crc);
+        //     debug("Valid  : ", valid);
+        // }
 
         return result;
     }
