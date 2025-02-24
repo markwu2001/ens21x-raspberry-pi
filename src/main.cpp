@@ -11,6 +11,7 @@ int main()
         float temperatureCelsius = ens215.getTempCelsius();
         float humidityPercent    = ens215.getHumidityPercent();
 
+        std::cout << "Temp and Humidity" << std::endl;
         std::cout << temperatureCelsius << std::endl;
         std::cout << humidityPercent << std::endl;
         return 1;
