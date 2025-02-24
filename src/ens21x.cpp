@@ -139,7 +139,7 @@ namespace ScioSense
         Result result = write(RegisterAddress::SYS_CTRL, SystemControl::RESET);
         if (result == Result::STATUS_OK)
         {
-            delay(SystemTiming::BOOTING);
+            usleep(SystemTiming::BOOTING * 1000);
         }
 
         // debug(__func__, result);
