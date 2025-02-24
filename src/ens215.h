@@ -10,7 +10,7 @@ namespace ScioSense
     public:
         ENS215() : ENS21x()
         {
-            debugPrefix = "ENS215 debug -- ";
+            // debugPrefix = "ENS215 debug -- ";
         }
 
         bool isConnected() override
