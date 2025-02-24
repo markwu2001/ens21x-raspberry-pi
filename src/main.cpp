@@ -17,8 +17,7 @@ int main()
         return 1;
     }
     else {
+        std::cout << "Error" << std::endl;
         return -1;
     }
 }
-
-main();
