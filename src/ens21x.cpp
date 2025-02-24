@@ -45,6 +45,14 @@ namespace ScioSense
         return isConnected();
     }
 
+    bool ENS21x::isConnected() {
+        // This is where you implement the actual logic to check if the sensor is connected.
+        // For example, you might try to read a register from the sensor and check the result.
+        // Here's a placeholder:
+    
+        return partId == 0x0215; // Or whatever your actual check is.  This is a common method.
+    }
+
     // void ENS21x::enableDebugging(Stream& debugStream)
     // {
     //     this->debugStream = &debugStream;
