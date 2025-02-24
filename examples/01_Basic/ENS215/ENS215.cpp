@@ -11,7 +11,7 @@ int main()
         float temperatureCelsius = ens215.getTempCelsius();
         float humidityPercent    = ens215.getHumidityPercent();
 
-        std::cerr << "Sensor Begin Error" << std::endl;
+        std::cerr << temperatureCelsius << std::endl;
         return 1;
     }
 }

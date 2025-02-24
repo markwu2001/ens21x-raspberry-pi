@@ -18,9 +18,9 @@ namespace ScioSense
             return partId ==  0x0215;
         }
 
-        bool begin(TwoWire& twoWire = Wire, uint8_t address= 0x47) override
+        bool begin(uint8_t address= 0x47) override
         {
-            return ENS21x::begin(twoWire, address);
+            return ENS21x::begin(address);
         }
     };
 }
