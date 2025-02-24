@@ -20,7 +20,7 @@ namespace ScioSense
     {
         // wire                = nullptr;
         fd                  = -1;    
-        debugStream         = nullptr;
+        // debugStream         = nullptr;
         solderCorrection    = 0;
         slaveAddress        = 0x43;
 
