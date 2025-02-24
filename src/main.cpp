@@ -16,4 +16,7 @@ int main()
         std::cout << humidityPercent << std::endl;
         return 1;
     }
+    else {
+        return -1
+    }
 }
