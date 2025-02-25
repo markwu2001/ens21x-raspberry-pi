@@ -6,6 +6,7 @@ ENS215 ens215;
 
 int main()
 {
+    ens215.enableDebugging(std::cout);
     if (ens215.singleShotMeasure() == ENS215::Result::STATUS_OK)
     {
         float temperatureCelsius = ens215.getTempCelsius();

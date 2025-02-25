@@ -96,7 +96,7 @@ namespace ScioSense
         Result getStatusH(); // returns the read status of the last read humidity data
 
     public:
-        void enableDebugging(Stream& debugStream);     // Enables the debug log. The output is written to the given debugStream
+        void enableDebugging(std::ostream& debugStream);     // Enables the debug log. The output is written to the given debugStream
         void disableDebugging();                       // Stops the debug log if enabled. Does nothing otherwise.
 
     protected:
@@ -136,7 +136,8 @@ namespace ScioSense
 
     private:
         // TwoWire* wire;
-        Stream* debugStream;
+        // Stream* debugStream;
+        std::ostream* debugStream;
     };
 }
 
