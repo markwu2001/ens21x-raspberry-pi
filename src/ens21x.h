@@ -138,7 +138,7 @@ namespace ScioSense
         // TwoWire* wire;
         // Stream* debugStream;
         std::ostream* debugStream = nullptr; // Initialize to nullptr
-        const char* debugPrefix = "ENS21x debug -- ";
+        // const char* debugPrefix = "ENS21x debug -- ";
     };
 }
 
