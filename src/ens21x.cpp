@@ -318,34 +318,22 @@ namespace ScioSense
         debug(msg, nullptr, 0, result);
     }
 
-    void ENS21x::debug(const char* msg, uint8_t* data, size_t size, Result& result)
-    {
-        if (debugStream)
-        {
-            debugStream->print(debugPrefix);
-            debugStream->print(msg);
-
-            for (size_t i = 0; i < size; i++)
-            {
-                debugStream->print(" 0x");
-                debugStream->print(data[i], HEX);
+    void ENS21x::debug(const char* msg, uint8_t* data, size_t size, Result& result) {
+        if (debugStream) {
+            (*debugStream) << debugPrefix << msg; // Use << for ostream
+    
+            for (size_t i = 0; i < size; i++) {
+                (*debugStream) << " 0x" << std::hex << (int)data[i]; // Use std::hex and cast to int
             }
-
-            debugStream->print(" status: ");
-            debugStream->println(toString(result));
+    
+            (*debugStream) << " status: " << toString(result) << std::endl; // Use << and std::endl
         }
     }
 
-    template<class T>
-    void ENS21x::debug(const char* msg, T data)
-    {
-        if (debugStream)
-        {
-            debugStream->print(debugPrefix);
-            debugStream->print(msg);
-            debugStream->print(" 0x");
-            debugStream->print((uint32_t)data, HEX);
-            debugStream->println();
+    template <class T>
+    void ENS21x::debug(const char* msg, T data) {
+        if (debugStream) {
+            (*debugStream) << debugPrefix << msg << " 0x" << std::hex << (uint32_t)data << std::endl; // Combine with <<
         }
     }
 
