@@ -53,15 +53,15 @@ namespace ScioSense
         return partId == 0x0215; // Or whatever your actual check is.  This is a common method.
     }
 
-    // void ENS21x::enableDebugging(Stream& debugStream)
-    // {
-    //     this->debugStream = &debugStream;
-    // }
+    void ENS21x::enableDebugging(Stream& debugStream)
+    {
+        this->debugStream = &debugStream;
+    }
 
-    // void ENS21x::disableDebugging()
-    // {
-    //     debugStream = nullptr;
-    // }
+    void ENS21x::disableDebugging()
+    {
+        debugStream = nullptr;
+    }
 
     ENS21x::Result ENS21x::update(uint64_t ms)
     {
