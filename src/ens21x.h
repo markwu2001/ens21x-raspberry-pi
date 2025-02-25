@@ -112,9 +112,9 @@ namespace ScioSense
         const char* debugPrefix= "ENS21x debug -- ";
         const char* toString(Result result);
         void debug(const char* msg);
-        void debug(const char* msg, Result& result);
-        void debug(const char* msg, uint8_t* data, size_t size, Result& result);
-        template<class T> void debug(const char* msg, T data);
+        void debug(const char* msg, const Result& result); // const Result&
+        void debug(const char* msg, const uint8_t* data, size_t size, const Result& result); // const Result&
+        template <class T> void debug(const char* msg, const T& data);
 
     protected:
         int fd;
@@ -137,7 +137,8 @@ namespace ScioSense
     private:
         // TwoWire* wire;
         // Stream* debugStream;
-        std::ostream* debugStream;
+        std::ostream* debugStream = nullptr; // Initialize to nullptr
+        const char* debugPrefix = "ENS21x debug -- ";
     };
 }
 
